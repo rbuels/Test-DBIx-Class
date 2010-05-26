@@ -27,6 +27,12 @@ package Test::DBIx::Class::SchemaManager; {
 		default=>0,	
 	);
 
+	has 'schema_deployed' => (
+		is=>'rw',
+		isa=>'Bool',
+		default=>0,
+	);
+
 	has 'builder' => (
 		is => 'ro',
 		isa => TestBuilder,
@@ -169,6 +175,7 @@ package Test::DBIx::Class::SchemaManager; {
 		if(my $schema = $self->schema) {
 			eval {
 				$schema->deploy($deploy_args);
+                                $self->schema_deployed(1);
 			};if($@) {
 				Test::More::fail("Error Deploying Schema: $@");
 			}
@@ -183,7 +190,7 @@ package Test::DBIx::Class::SchemaManager; {
 
 		return unless $schema;
 
-		unless ($self->keep_db) {
+		unless ($self->keep_db || !$self->schema_deployed) {
 			$schema->storage->with_deferred_fk_checks(sub {
 				foreach my $source ($schema->sources) {
 					my $table = $schema->source($source)->name;

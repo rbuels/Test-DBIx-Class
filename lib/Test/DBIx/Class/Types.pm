@@ -3,6 +3,7 @@ package Test::DBIx::Class::Types; {
 	use strict;
 	use warnings;
 
+        use Scalar::Util qw/ reftype /;
 	use Class::MOP;
 	use MooseX::Types::Moose qw(Str Int ClassName ArrayRef HashRef);
 	use MooseX::Types -declare => [qw/
